@@ -4,10 +4,16 @@ const Schema   = mongoose.Schema;
 const userSchema = new Schema({
   username: String,
   password: String,
-  email: String,
+  provider: String,
+  facebookID: String,
+  displayName: String,
+  emails: [{value: String}, {type: String}],
+  name: Object,
   store: String,
+  
   role:{type: String, enum:['admin', 'provider', 'normalUser'], default:'normalUser'}
-}, {
+}, 
+{
   timestamps: {
     createdAt: "created_at",
     updatedAt: "updated_at"

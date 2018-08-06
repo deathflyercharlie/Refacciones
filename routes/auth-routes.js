@@ -60,13 +60,22 @@ authRoutes.post("/login", passport.authenticate("local", {
   passReqToCallback: true
 }));
 
-authRoutes.get("/private-page", ensureLogin.ensureLoggedIn(), (req, res) => {
-  res.render("private", { user: req.user });
+
+authRoutes.get("/profile", ensureLogin.ensureLoggedIn(), (req, res, next) => {
+  res.render("profile", { user: req.user });
 });
 
 authRoutes.get("/logout", (req, res) => {
   req.logout();
   res.redirect("/login");
 });
+
+authRoutes.get("/auth/facebook", passport.authenticate("facebook"));
+authRoutes.get("/auth/facebook/callback", passport.authenticate("facebook", {
+  successRedirect: "/profile",
+  failureRedirect: "/signup"
+}));
+
+
 
 module.exports = authRoutes;
