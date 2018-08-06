@@ -12,6 +12,7 @@ const amplify      = require('aws-amplify');
 const bcrypt       = require('bcrypt');
 const saltRounds   = 10;
 const session      = require('express-session');
+const FbStrategy = require('passport-facebook').Strategy;
 const passport     = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const MongoStore = require('connect-mongo')(session);
@@ -78,6 +79,7 @@ passport.deserializeUser((id, cb) => {
 });
 
 app.use(flash());
+
 passport.use(new LocalStrategy({
   passReqToCallback: true},
   (req,username, password, next) => {
@@ -96,6 +98,31 @@ passport.use(new LocalStrategy({
   });
 }));
 
+passport.use(new FbStrategy({
+  clientID: "2195892813989486",
+  clientSecret: "bcaacced9eadbfae9b5d823a507f8bf9",
+  callbackURL: "/auth/facebook/callback"
+}, async (accessToken, refreshToken, profile, done) => {
+  console.log(profile);
+  const existingUser = await User.findOne({ facebookID: profile.id})
+      if(existingUser){
+        return done(null, existingUser);
+      }
+      const newUser = new User({
+        facebookID: profile.id,
+        displayName: profile.displayName,
+
+      });
+  
+     
+
+      try{ 
+        const user = await newUser.save()
+        done(null, user)
+      }
+      catch(err) {done(err)}
+    
+}));
 
 
 
