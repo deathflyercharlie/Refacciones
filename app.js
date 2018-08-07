@@ -1,4 +1,3 @@
-require('dotenv').config();
 
 const bodyParser   = require('body-parser');
 const cookieParser = require('cookie-parser');
@@ -17,15 +16,25 @@ const LocalStrategy = require('passport-local').Strategy;
 const MongoStore = require('connect-mongo')(session);
 const flash      = require("connect-flash");
 const User = require("./models/user");
+const Part = require("./models/parts")
 
 mongoose.Promise = Promise;
-mongoose
-  .connect('mongodb://deathflyercharlie:ag2NEjnvy8lyevtH@cluster0-shard-00-00-eevwd.mongodb.net:27017,cluster0-shard-00-01-eevwd.mongodb.net:27017,cluster0-shard-00-02-eevwd.mongodb.net:27017/lab-nodemailer?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true', {useMongoClient: true})
-  .then(() => {
-    console.log('Connected to Mongo Refacciones!')
-  }).catch(err => {
-    console.error('Error connecting to mongo', err)
-  });
+mongoose.connect("mongodb://localhost/refacciones",{useMongoClient: true})
+.then(()=>{
+  console.log("Conected to Mongo")
+})
+.catch(err =>{
+  console.log("Error conecting to mongo", err)
+});
+
+// mongoose.Promise = Promise;
+// mongoose
+//   .connect('mongodb://deathflyercharlie:ag2NEjnvy8lyevtH@cluster0-shard-00-00-eevwd.mongodb.net:27017,cluster0-shard-00-01-eevwd.mongodb.net:27017,cluster0-shard-00-02-eevwd.mongodb.net:27017/lab-nodemailer?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true', {useMongoClient: true})
+//   .then(() => {
+//     console.log('Connected to Mongo Refacciones!')
+//   }).catch(err => {
+//     console.error('Error connecting to mongo', err)
+//   });
 
 
 const app_name = require('./package.json').name;
@@ -56,7 +65,7 @@ app.use(favicon(path.join(__dirname, 'public', 'images', 'favicon.ico')));
 
 
 // default value for title local
-app.locals.title = 'Express - Generated with IronGenerator';
+app.locals.title = 'Refacciones';
 
 // configuration of passport security
 
@@ -64,7 +73,10 @@ app.use(session({
   secret: "our-passport-local-strategy-app",
   resave: true,
   saveUninitialized: true
-}));
+}))
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 passport.serializeUser((user, cb) => {
   cb(null, user._id);
@@ -96,13 +108,11 @@ passport.use(new LocalStrategy({
   });
 }));
 
-
-
-
-app.use(passport.initialize());
-app.use(passport.session());
-
-
+app.use((req,res,next) => {
+  if (req.user)
+    res.locals.username = req.user.username
+  next()
+})
 
 
 const index = require('./routes/index');
