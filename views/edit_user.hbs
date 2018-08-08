@@ -9,9 +9,9 @@
   </tr>
   {{#each user}}
   <tr>
-    <td>{{userName}}</td>
+    <td>{{username}}</td>
     <td>{{role}}</td>
-    <td><a href="/delete-user">Borrar Usuario</a></td>
+    <td><a href="/delete-user/{{id}}">Borrar Usuario</a></td>
   </tr>
   {{/each}}
 </table>
@@ -22,8 +22,8 @@
 
 <form action="/edit-user" method="POST">
 <div>
-  <label for="userName">User Name</label>
-  <input type="text" name="userName">
+  <label for="username">User Name</label>
+  <input type="text" name="username">
 </div>
 <br>
 <div>
@@ -49,5 +49,9 @@
     <option value="provider">Proveedor</option>
     <option value="normalUser">Usuario</option>
   </select>
+</div>
+<br>
+<div>
+  <input type="submit" value="Agregar Usuario">
 </div>
 </form>

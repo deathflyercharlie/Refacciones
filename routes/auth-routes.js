@@ -55,7 +55,7 @@ authRoutes.post("/signup", (req, res, next) => {
 
 //check roles
 
-function checkRoles(roles){
+function checkRoles(role){
   return function(req,res,next){
     if(req.isAuthenticated() && req.user.role === role){
       return next();
@@ -85,33 +85,42 @@ authRoutes.get("/edit-user", checkAdmin,(req, res, next)=>{
 
 authRoutes.post("/edit-user", checkAdmin, (req,res,next)=>{
   const username = req.body.username;
+  console.log('-------------',username);
   const password = req.body.password;
   const role = req.body.role;
-
-  if(username === "" || password === "" || role === ""){
+  const email = req.body.email;
+  const store = null;
+  if(username === "" || password === "" || role === "" || email === ""){
     res. render("edit_user", {message: "Todos los campos son requeridos"});
     return;
   }
-
-  user.findOne({username})
-  .then(user =>{
-    if(user !== null){
+  if(store === ""){
+    store = req.body.store;
+  }
+  User.findOne({username})
+  .then(usernameStored =>{
+    if(usernameStored !== null){
       res.render("edit_user", {message: "El usuario ya existe"});
       return;
     }
+
+    const salt = bcrypt.genSaltSync(bcryptSalt);
+    const hashPass = bcrypt.hashSync(password, salt)
+
     const newUser = new User({
-      username,
+      username: username,
       password: hashPass,
-      email,
-      store,
-      role
+      email: email,
+      store: store,
+      role: role
     });
+    console.log(newUser);
 
     newUser.save((err)=>{
       if(err){
         res.render("edit_user", {message: "Algo salio mal"});
       }else {
-        res.redirect("/edito-user")
+        res.redirect("/edit-user")
       }
     });
     })
@@ -123,8 +132,9 @@ authRoutes.post("/edit-user", checkAdmin, (req,res,next)=>{
 //Delete User
 
  authRoutes.get("/delete-user/:id", checkAdmin, async (req, res, next)=>{
-  const result = await User.deleteOne({_id: req.pram.id})
-  result.redirect("/edit-user")
+  const result = await User.deleteOne({_id: req.params.id});
+  console.log(result.deletedCount);
+  if(result.deletedCount === 1)res.redirect("/edit-user");
  })
  
  authRoutes.get("/");
@@ -173,24 +183,24 @@ authRoutes.post("/login", passport.authenticate("local", {
   passReqToCallback: true
 }));
 authRoutes.post('/login',
-    function(req, res, next) {
-        passport.authenticate('local', function(err, user) {
-            if (err) { return next(err) }
-            if (!user) {
-                res.local("username", req.param('username'));
-                return res.render('auth/login', { error: true });
-            }
+  function(req, res, next) {
+      passport.authenticate('local', function(err, user) {
+          if (err) { return next(err) }
+          if (!user) {
+              res.local("username", req.param('username'));
+              return res.render('auth/login', { error: true });
+          }
 
-            // make passportjs setup the user object, serialize the user, ...
-            req.login(user, {}, function(err) {
-                if (err) { return next(err) };
-                console.log('USER:   ---', user);
-                console.log('USER in FRONT:   ---', req.user);
-                return res.redirect("/");
-            });
-        })(req, res, next);
-        return;
-    }
+          // make passportjs setup the user object, serialize the user, ...
+          req.login(user, {}, function(err) {
+              if (err) { return next(err) };
+              console.log('USER:   ---', user);
+              console.log('USER in FRONT:   ---', req.user);
+              return res.redirect("/");
+          });
+      })(req, res, next);
+      return;
+  }
 );
 
 // // authRoutes.get("/private-page", ensureLogin.ensureLoggedIn(), (req, res) => {
