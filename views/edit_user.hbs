@@ -1,0 +1,57 @@
+<br><br>
+<h2>Editar Usuarios</h2>
+<br>
+
+<table>
+  <tr>
+    <td>User Name</td>
+    <td>Role</td>
+  </tr>
+  {{#each user}}
+  <tr>
+    <td>{{username}}</td>
+    <td>{{role}}</td>
+    <td><a href="/delete-user/{{id}}">Borrar Usuario</a></td>
+  </tr>
+  {{/each}}
+</table>
+
+<br>
+<h2>Agregar Usuario</h2>
+<br>
+
+<form action="/edit-user" method="POST">
+<div>
+  <label for="username">User Name</label>
+  <input type="text" name="username">
+</div>
+<br>
+<div>
+  <label for="email">Correo electronico</label>
+  <input type="text" name="email">
+</div>
+<br>
+<div>
+  <label for="password">Contraseña</label>
+  <input type="pasword" name="password">
+</div>
+<br>
+<div>
+  <label for="store">Tienda</label>
+  <input type="text" name="store">
+</div>
+<br>
+<div>
+  <label for="role">Tipo de Usuario</label>
+  <select name="role">
+    <option value=""></option>
+    <option value="admin">Administrador</option>
+    <option value="provider">Proveedor</option>
+    <option value="normalUser">Usuario</option>
+  </select>
+</div>
+<br>
+<div>
+  <input type="submit" value="Agregar Usuario">
+</div>
+</form>

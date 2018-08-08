@@ -1,3 +1,5 @@
+<br><br>
+<h1>login</h1>
 <form action="/login" method="POST">
   <div>
     <label for="username">Username:</label>
@@ -6,10 +8,6 @@
   <div>
     <label for="password">Password:</label>
     <input type="password" name="password">
-  </div>
-  <div>
-    <label for="email">Email:</label>
-    <input type="text" name="email">
   </div>
   {{#if message}}
     <div class="error-message">{{ message }}</div>

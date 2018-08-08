@@ -1,0 +1,21 @@
+<br>
+<h2>Catalogo de partes</h2>
+<br>
+ 
+ <table>
+   <tr>
+     <td>Nombre de la pieza</td>
+     <td>Marca</td>
+     <td>Modelo</td>
+     <td>Año</td>
+   </tr>
+   {{#each parts}}
+   <tr>
+     <td>{{name}}</td>
+     <td>{{brand}}</td>
+     <td>{{carModel}}</td>
+     <td>{{year}}</td>
+   </tr>
+   {{/each}}
+ </table>
+

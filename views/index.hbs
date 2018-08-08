@@ -2,3 +2,6 @@
 <p>Welcome to {{title}}</p>
 
 <a href="/auth/facebook">Login With Facebook</a>
+{{#if user}}
+<h1>{{user.username}}</h1>
+{{/if}}
